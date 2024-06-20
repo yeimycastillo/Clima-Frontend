@@ -1,0 +1,110 @@
+const apiURL = "http://localhost:8080";
+
+async function fetchWeather(){
+    const response = await fetch(apiURL+'/weathers');
+    const data = await response.json();
+    document.getElementById('searchForm').reset()
+    renderWeatherTable(Array.isArray(data) ? data : []);
+}
+
+async function renderWeatherTable(data) {
+    const tablaClima = document.getElementById('tablaClima').getElementsByTagName('tbody')[0];
+    tablaClima.innerHTML = '';
+
+    data.forEach(clima => {
+        const row = tablaClima.insertRow();
+        const cellCity = row.insertCell(0);
+        const cellDate = row.insertCell(1);
+        const cellDescription = row.insertCell(2);
+        const cellTemperature = row.insertCell(3);
+        const cellActions = row.insertCell(4);
+
+        cellCity.textContent = clima.city;
+        cellDate.textContent = clima.date;
+        cellDescription.textContent = clima.description;
+        cellTemperature.textContent = clima.temperature;
+
+        // Crear botón de actualizar con un data-id
+        const updateButton = document.createElement('button');
+        updateButton.textContent = 'Actualizar';
+        updateButton.id='actualizar';
+        updateButton.setAttribute('data-id', clima.id);
+        updateButton.onclick = () => fillFormForUpdate(clima);
+        cellActions.appendChild(updateButton);
+
+        // Crear botón de eliminar con un data-id
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Eliminar';
+        deleteButton.id = 'eliminar'
+        deleteButton.setAttribute('data-id', clima.id);
+        deleteButton.onclick = () => deleteWeather(clima.id);
+        cellActions.appendChild(deleteButton);
+    });
+}
+
+function fillFormForUpdate(clima) {
+    document.getElementById('weatherId').value = clima.id;
+    document.getElementById('city').value = clima.city;
+    document.getElementById('date').value = clima.date;
+    document.getElementById('description').value = clima.description;
+    document.getElementById('temperature').value = clima.temperature;
+}
+
+async function saveWeather(event) {
+    event.preventDefault();
+    const weatherId = document.getElementById('weatherId').value;
+    const city = document.getElementById('city').value;
+    const date = document.getElementById('date').value;
+    const description = document.getElementById('description').value;
+    const temperature = document.getElementById('temperature').value;
+
+    const method = weatherId ? 'PUT' : 'POST';
+    const url = weatherId ? `${apiURL}/weather/${weatherId}` : `${apiURL}/weather`;
+
+    const response = await fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            city,
+            date,
+            description,
+            temperature
+        })
+    });
+
+    if (response.ok) {
+        fetchWeather(); // Actualizar la tabla de clima
+        document.getElementById('formularioClima').reset(); // Limpiar el formulario
+    }
+}
+
+async function deleteWeather(id) {
+    const response = await fetch(`${apiURL}/weather/${id}`, {
+        method: 'DELETE'
+    });
+
+    if (response.ok) {
+        fetchWeather(); // Actualizar la tabla de clima
+    }
+}
+
+async function searchWeather() {
+    const searchCity = document.getElementById('citySearch').value;
+    const searchDate = document.getElementById('dateSearch').value;
+    let url = `${apiURL}/weathers`;
+
+    if (searchCity || searchDate) {
+        url = `${apiURL}/weather?`;
+        if (searchCity) url += `city=${searchCity}&`;
+        if (searchDate) url += `date=${searchDate}`;
+    }
+
+    const response = await fetch(url);
+    const data = await response.json();
+    renderWeatherTable(Array.isArray(data) ? data : []);
+}
+
+document.getElementById('formularioClima').addEventListener('submit', saveWeather);
+fetchWeather();

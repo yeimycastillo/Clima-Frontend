@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>ClimApp ❄</title>
+</head>
+
+<body>
+    <header>
+        <h1 class="titulo">ClimApp ❄</h1>
+    </header>
+    <main>
+    <form id="searchForm">
+        <div class="barras-busqueda">
+            <div class="buscar">
+                <label for="citySearch">Busca por ciudad</label>
+                <input type="text" name="citySearch" id="citySearch" placeholder="London">
+            </div>
+            <div class="buscar">
+                <label for="dateSearch">Busca por fecha</label>
+                <input type="date" name="dateSearch" id="dateSearch">
+            </div>
+            <button type="button" onclick="searchWeather()">Buscar</button>
+        <button type="button" onclick="fetchWeather()">Limpiar campos</button>
+        </div>
+    </form>
+    
+
+    <table id="tablaClima" border="1">
+        <thead>
+            <th>Ciudad</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Temperatura</th>
+            <th>Acciones</th>
+        </thead>
+        <tbody>
+            <!-- contenido de la tabla -->
+        </tbody>
+    </table>
+
+    <div class="division">
+        <div class="linea"></div>
+        <div class="leyenda">Crear más registros</div>
+        <div class="linea"></div>
+    </div>
+    
+    
+
+    <form id="formularioClima">
+        <input type="hidden" id="weatherId">
+        <input type="text" id="city" placeholder="Ciudad" required>
+        <input type="date" id="date" required>
+        <input type="text" id="description" placeholder="Descripción" required>
+        <input type="number" id="temperature" placeholder="Temperatura" required>
+        <button type="submit">Guardar</button>
+    </form>
+    <script src="index,js"></script>
+</main>
+</body>
+
+</html>
